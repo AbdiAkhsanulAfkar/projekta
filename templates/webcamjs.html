@@ -1,0 +1,37 @@
+<script src="{{url_for('static', filename='js/webcam.js')}}"></script>
+    <form method="POST" enctype="multipart/form-data" id="myForm">
+        <table>
+            <tr>
+                <input id="mydata"  name="mydata" value=""/>
+                <td><input type="button" value="Upload" onclick="upload()"></td>
+                <input type="button" onclick="snap()" value="Snap">
+            </tr>
+        </table>
+    </form>
+    <div id="my_camera" style="width:500px; height:500px";></div>
+    <div id="results"></div>
+<script language="JavaScript">
+function ShowCam() {
+    Webcam.set('constraints',{
+        facingMode: "environment"
+    });
+    Webcam.attach('#my_camera');
+}
+window.onload= ShowCam;
+function snap() {
+	Webcam.snap( function(data_uri) {
+		var raw_image_data = data_uri.replace(/^data\:image\/\w+\;base64\,/, '');
+		document.getElementById('mydata').value = raw_image_data;
+		var form = document.getElementById('myForm');
+        var formData = new FormData(form);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://127.0.0.1:8000/capture_img', true);
+        xhr.onload = () => {
+            console.log(xhr.responseText)
+    }
+    xhr.send(formData);
+    console.log(formData.get('mydata'));
+	} );
+	}
+
+</script>
